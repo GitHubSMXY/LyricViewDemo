@@ -21,7 +21,6 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -155,7 +154,8 @@ public class LyricView extends View {
                 if(y + mLineHeight * 0.5f < 0) {
                     continue;
                 }
-                if(y - mLineHeight * 0.5f > getMeasuredHeight()) {
+//                if(y - mLineHeight * 0.5f > getMeasuredHeight()) {
+                if(y > getMeasuredHeight()) {
                     break;
                 }
                 if(i == mCurrentPlayLine - 1) {
@@ -168,10 +168,15 @@ public class LyricView extends View {
                     }
                 }
                 if(y > getMeasuredHeight() - mShaderWidth || y < mShaderWidth) {
+//                    if(y < mShaderWidth) {
+//                        mTextPaint.setAlpha(26 + (int) (23000.0f * y / mShaderWidth * 0.01f));
+//                    } else {
+//                        mTextPaint.setAlpha(26 + (int) (23000.0f * (getMeasuredHeight() - y) / mShaderWidth * 0.01f));
+//                    }
                     if(y < mShaderWidth) {
-                        mTextPaint.setAlpha(26 + (int) (23000.0f * y / mShaderWidth * 0.01f));
+                        mTextPaint.setAlpha(26 + (int) (230.0f * y / mShaderWidth));
                     } else {
-                        mTextPaint.setAlpha(26 + (int) (23000.0f * (getMeasuredHeight() - y) / mShaderWidth * 0.01f));
+                        mTextPaint.setAlpha(26 + (int) (230.0f * (getMeasuredHeight() - y) / mShaderWidth));
                     }
                 } else {
                     mTextPaint.setAlpha(255);
@@ -514,8 +519,11 @@ public class LyricView extends View {
                 invalidateView();
             }
         });
-        animator.setDuration(640);
-        animator.setInterpolator(new OvershootInterpolator(0.5f));
+//        animator.setDuration(640);
+//        animator.setInterpolator(new OvershootInterpolator(0.5f));
+//        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        animator.setDuration(400);
 
         animator.start();
     }

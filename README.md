@@ -1,3 +1,11 @@
+在WuLiFei/LyricViewDemo基础上修改，改进点:
+
+1.修复了歌词展示区域的尾行刷新异常
+
+2.支持本地歌词、mp3展示
+
+
+
 ![效果图一](http://bmob-cdn-1791.b0.upaiyun.com/2016/08/22/6fbc14ca40e9abaa8043a44f39df138b.gif)
 
 ![效果图二](http://bmob-cdn-1791.b0.upaiyun.com/2016/08/22/6549b64d40a4c3258032f5b42da0ffc5.gif)

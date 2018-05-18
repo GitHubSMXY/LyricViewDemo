@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -33,7 +35,9 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.nineoldandroids.view.ViewHelper;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, LyricView.OnPlayerClickListener {
@@ -254,16 +258,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case STATE_SETUP:
                 File file = new File(Constant.lyricPath + song_names[position] + ".lrc");
+
                 if(file.exists()) {
-                    lyricView.setLyricFile(file, "GBK");
+                    lyricView.setLyricFile(file, "utf-8");
                 } else {
-                    downloadLyric(song_lyrics[position], file);
+                    //TODO 服务器上下载
+//                    downloadLyric(song_lyrics[position], file);
+
+                    //TODO 使用本地歌词文件
+                    useLocalLrc(file);
                 }
                 btnPlay.setImageResource(R.mipmap.m_icon_player_play_normal);
                 setLoading(true);
                 break;
             default:
                 break;
+        }
+    }
+
+    private void useLocalLrc(File file) {
+        try {
+            InputStream lrc = getAssets().open(song_names[position] + ".lrc");
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            byte[] b = new byte[1024];
+
+            while((lrc.read(b)) != -1){
+                fileOutputStream.write(b);
+            }
+            lrc.close();
+            fileOutputStream.close();
+            lyricView.setLyricFile(file, "utf-8");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -287,12 +313,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case MSG_LYRIC_SHOW:
                     try {
                         setCurrentState(State.STATE_SETUP);
-                        mediaPlayer = new MediaPlayer();
-                        mediaPlayer.setOnPreparedListener(MainActivity.this);
-                        mediaPlayer.setOnCompletionListener(MainActivity.this);
-                        mediaPlayer.setOnBufferingUpdateListener(MainActivity.this);
-                        mediaPlayer.setDataSource(song_urls[position]);
-                        mediaPlayer.prepareAsync();
+
+                        //TODO 使用网络歌曲资源
+//                        initMediaWithUrl();
+
+                        //TODO 使用本地歌曲资源
+                        initMediaWithAssets();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -312,6 +338,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     };
+
+    /**
+     * 通过本地数据初始化MediaPlayer
+     * @throws IOException
+     */
+    private void initMediaWithAssets() throws IOException {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(MainActivity.this);
+        mediaPlayer.setOnCompletionListener(MainActivity.this);
+        mediaPlayer.setOnBufferingUpdateListener(MainActivity.this);
+        AssetManager assets = getAssets();
+        AssetFileDescriptor assetFileDescriptor = assets.openFd(song_names[position] + ".mp3");
+        mediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor());
+        mediaPlayer.prepareAsync();
+    }
+
+    /**
+     * 通过URL初始化MediaPlayer
+     * @throws IOException
+     */
+    private void initMediaWithUrl() throws IOException {
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(MainActivity.this);
+        mediaPlayer.setOnCompletionListener(MainActivity.this);
+        mediaPlayer.setOnBufferingUpdateListener(MainActivity.this);
+        mediaPlayer.setDataSource(song_urls[position]);
+        mediaPlayer.prepareAsync();
+    }
 
     private boolean mLoading = false;
 
