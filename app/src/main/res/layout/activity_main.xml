@@ -75,7 +75,7 @@
                 android:padding="6dp"
                 android:gravity="center"
                 android:textColor="#16BC5C"
-                android:layout_width="48dp"
+                android:layout_width="wrap_content"
                 android:id="@android:id/text1"
                 android:layout_height="wrap_content" />
 
@@ -101,7 +101,7 @@
                 android:padding="6dp"
                 android:gravity="center"
                 android:textColor="#ECF0F1"
-                android:layout_width="48dp"
+                android:layout_width="wrap_content"
                 android:id="@android:id/text2"
                 android:layout_height="wrap_content" />
         </LinearLayout>

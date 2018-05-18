@@ -259,15 +259,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case STATE_SETUP:
                 File file = new File(Constant.lyricPath + song_names[position] + ".lrc");
 
-                if(file.exists()) {
-                    lyricView.setLyricFile(file, "utf-8");
-                } else {
+//                if(file.exists()) {
+//                    lyricView.setLyricFile(file, "utf-8");
+//                } else {
                     //TODO 服务器上下载
 //                    downloadLyric(song_lyrics[position], file);
+//                }
 
-                    //TODO 使用本地歌词文件
-                    useLocalLrc(file);
-                }
+                //TODO 使用本地歌词文件
+                useLocalLrc(file);
+
                 btnPlay.setImageResource(R.mipmap.m_icon_player_play_normal);
                 setLoading(true);
                 break;
@@ -277,19 +278,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void useLocalLrc(File file) {
-        try {
-            InputStream lrc = getAssets().open(song_names[position] + ".lrc");
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            byte[] b = new byte[1024];
-
-            while((lrc.read(b)) != -1){
-                fileOutputStream.write(b);
+        if (file != null) {
+            if (file.exists()) {
+                file.delete();
             }
-            lrc.close();
-            fileOutputStream.close();
-            lyricView.setLyricFile(file, "utf-8");
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                InputStream lrc = getAssets().open(song_names[position] + ".lrc");
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                byte[] b = new byte[1024];
+
+                while((lrc.read(b)) != -1){
+                    fileOutputStream.write(b);
+                }
+                lrc.close();
+                fileOutputStream.close();
+                lyricView.setLyricFile(file, "utf-8");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
